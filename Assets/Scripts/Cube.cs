@@ -7,12 +7,12 @@ using UnityEngine;
 [RequireComponent(typeof(ColorChanger))]
 public class Cube : MonoBehaviour
 {
+    private float _divisionChance = 1.0f;
 
     public event Action<Cube> Activating;
 
-    private float _divisionChance = 1.0f;
-
     public float DivisionChance => _divisionChance;
+    public float ExplosionRadius => Exploder.Radius;
     public Exploder Exploder { get; private set; }
     public ColorChanger ColorChanger { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
@@ -24,16 +24,12 @@ public class Cube : MonoBehaviour
         ColorChanger = GetComponent<ColorChanger>();
     }
 
-    public void Init(Vector3 scale, float chance, Color color)
+    public void Init(Vector3 scale, float chance, Color color, float radius)
     {
         transform.localScale = scale;
         _divisionChance = chance;
         ColorChanger.SetColor(color);
-    }
-
-    public void Explode(List<Cube> cubes)
-    {
-        Exploder.Explode(cubes);
+        Exploder.SetRadius(radius);
     }
 
     public void Activate()
@@ -43,6 +39,10 @@ public class Cube : MonoBehaviour
         if (chance < _divisionChance)
         {
             Activating?.Invoke(this);
+        }
+        else
+        {
+            Exploder.Explode();
         }
 
         Destroy(gameObject);

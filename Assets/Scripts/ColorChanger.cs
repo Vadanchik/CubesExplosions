@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class ColorChanger : MonoBehaviour
 {
+    private Renderer _renderer;
+
     public void SetColor(Color color)
     {
-        Renderer renderer = GetComponent<Renderer>();
-        renderer.material.color = color;
+        _renderer = GetComponent<Renderer>();
+        _renderer.material.color = color;
     }
 }

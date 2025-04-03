@@ -11,6 +11,7 @@ public class CubeCreator : MonoBehaviour
 
     [SerializeField] private float _reductionMultiplier = 0.5f;
     [SerializeField] private float _chanceReduction = 0.5f;
+    [SerializeField] private float _explosionRadiusMultiplier = 2;
 
     private void OnEnable()
     {
@@ -39,12 +40,10 @@ public class CubeCreator : MonoBehaviour
         for (int i = 0; i < cubesCount; i++)
         {
             Cube cube = Instantiate(_cubePrefab, currentCube.transform.position, Quaternion.identity);
-            cube.Init(currentCube.transform.localScale * _reductionMultiplier, currentCube.DivisionChance * _chanceReduction, Random.ColorHSV());
+            cube.Init(currentCube.transform.localScale * _reductionMultiplier, currentCube.DivisionChance * _chanceReduction, Random.ColorHSV(), currentCube.ExplosionRadius * _explosionRadiusMultiplier);
 
             cube.Activating += CreateCubes;
             cubes.Add(cube);
         }
-
-        currentCube.Explode(cubes);
     }
 }
