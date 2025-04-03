@@ -1,12 +1,24 @@
-using System;
 using UnityEngine;
 
 public class InputService : MonoBehaviour
 {
-    public event Action ObjectClicked;
+    [SerializeField] private LayerMask _layerMask;
 
-    private void OnMouseDown()
+    private void Update()
     {
-        ObjectClicked?.Invoke();
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePosition = Input.mousePosition;
+            Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.TryGetComponent<Cube>(out Cube cube))
+                {
+                    cube.Activate();
+                }
+            }
+        }
     }
 }

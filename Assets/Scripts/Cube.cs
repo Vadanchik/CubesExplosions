@@ -1,68 +1,50 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Exploder))]
+[RequireComponent(typeof(ColorChanger))]
 public class Cube : MonoBehaviour
 {
-    [SerializeField] private CubeCreator _cubeCreator;
-    [SerializeField] private ParticleSystem _effect;
-    [SerializeField] private InputService _input;
 
-    private float _explosionForce = 10;
+    public event Action<Cube> Activating;
+
     private float _divisionChance = 1.0f;
 
-    private void OnEnable()
+    public float DivisionChance => _divisionChance;
+    public Exploder Exploder { get; private set; }
+    public ColorChanger ColorChanger { get; private set; }
+    public Rigidbody Rigidbody { get; private set; }
+
+    private void Awake()
     {
-        _input.ObjectClicked += Activate;
+        Rigidbody = GetComponent<Rigidbody>();
+        Exploder = GetComponent<Exploder>();
+        ColorChanger = GetComponent<ColorChanger>();
     }
 
-    private void OnDisable()
-    {
-        _input.ObjectClicked -= Activate;
-    }
-
-    public void SetScale(Vector3 scale)
+    public void Init(Vector3 scale, float chance, Color color)
     {
         transform.localScale = scale;
-    }
-
-    public void SetDivisionChance(float chance)
-    {
         _divisionChance = chance;
+        ColorChanger.SetColor(color);
     }
 
-    public void SetCubeCreator(CubeCreator cubeCreator)
+    public void Explode(List<Cube> cubes)
     {
-        _cubeCreator = cubeCreator;
+        Exploder.Explode(cubes);
     }
 
-    public void SetColor(Color color)
+    public void Activate()
     {
-        Renderer renderer = GetComponent<Renderer>();
-        renderer.material.color = color;
-    }
-
-    private void Activate()
-    {
-        float chance = Random.value;
+        float chance = UnityEngine.Random.value;
 
         if (chance < _divisionChance)
         {
-            Explode(_cubeCreator.CreateCubes(transform.position, transform.localScale, _divisionChance));
+            Activating?.Invoke(this);
         }
 
         Destroy(gameObject);
     }
-
-    private void Explode(List<Cube> cubes)
-    {
-        foreach (Cube cube in cubes)
-        {
-            Vector3 direction = new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(0, 1.0f), Random.Range(-1.0f, 1.0f)).normalized;
-            cube.GetComponent<Rigidbody>().AddForce(direction * _explosionForce, ForceMode.Impulse);
-        }
-
-        Instantiate(_effect, transform.position, Quaternion.identity).transform.localScale = transform.localScale;
-    }
 }
-
