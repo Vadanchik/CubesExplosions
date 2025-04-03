@@ -45,5 +45,7 @@ public class CubeCreator : MonoBehaviour
             cube.Activating += CreateCubes;
             cubes.Add(cube);
         }
+
+        currentCube.ExplodeCubes(cubes);
     }
 }

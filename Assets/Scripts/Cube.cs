@@ -42,9 +42,14 @@ public class Cube : MonoBehaviour
         }
         else
         {
-            Exploder.Explode();
+            Exploder.ExplodeArea();
         }
 
         Destroy(gameObject);
+    }
+
+    public void ExplodeCubes(List<Cube> cubes)
+    {
+        Exploder.ExplodeCubes(cubes);
     }
 }
